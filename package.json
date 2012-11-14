@@ -2,22 +2,22 @@
   "name": "grunt-browserify",
   "description": "Grunt task for node-browserify",
   "version": "0.1.1",
-  "homepage": "https://github.com/pix/grunt-browserify",
+  "homepage": "https://github.com/rocketpack/grunt-browserify",
   "author": {
     "name": "Camille Moncelier",
     "email": "camille@moncelier.fr"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/pix/grunt-browserify.git"
+    "url": "git://github.com/rocketpack/grunt-browserify.git"
   },
   "bugs": {
-    "url": "https://github.com/pix/grunt-browserify/issues"
+    "url": "https://github.com/rocketpack/grunt-browserify/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/pix/grunt-browserify/blob/master/LICENSE-MIT"
+      "url": "https://github.com/rocketpack/grunt-browserify/blob/master/LICENSE-MIT"
     }
   ],
   "main": "grunt.js",
