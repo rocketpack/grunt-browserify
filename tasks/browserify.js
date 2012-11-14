@@ -15,36 +15,42 @@ module.exports = function (grunt) {
   // ==========================================================================
   grunt.registerMultiTask('browserify', 'Your task description goes here.', function () {
     var browserify = require('browserify');
+    var config = grunt.config.process(this.name)[this.target];
 
-    var b = browserify(this.data.options || {});
+    var b = browserify(config.options || {});
 
-    (this.data.requires || []).forEach(function (req) {
+    (config.requires || []).forEach(function (req) {
       grunt.verbose.writeln('Adding "' + req + '" to the required module list');
       b.require(req);
     });
 
-    grunt.file.expandFiles(this.data.entries || []).forEach(function (filepath) {
+    grunt.file.expandFiles(config.entries || []).forEach(function (filepath) {
       grunt.verbose.writeln('Adding "' + filepath + '" to the entry file list');
-      b.addEntry(filepath);
+      try {
+        b.addEntry(filepath);
+      } catch (e) {
+        console.error('Error', e);
+        throw e;
+      }
     });
 
-    var files = grunt.file.expandFiles(this.data.prepend || []);
+    var files = grunt.file.expandFiles(config.prepend || []);
     var src = grunt.helper('concat', files, {
       separator: ''
     });
     b.prepend(src);
 
-    files = grunt.file.expandFiles(this.data.append || []);
+    files = grunt.file.expandFiles(config.append || []);
     src = grunt.helper('concat', files, {
       separator: ''
     });
     b.append(src);
 
-    if (this.data.hook) {
-      this.data.hook.call(this, b);
+    if (config.hook) {
+      config.hook.call(this, b);
     }
 
-    grunt.file.write(this.target, b.bundle());
+    grunt.file.write(config.target || this.target, b.bundle());
   });
 
 };
