@@ -50,7 +50,12 @@ module.exports = function (grunt) {
       config.hook.call(this, b);
     }
 
-    grunt.file.write(config.target || this.target, b.bundle());
+    var bundle = b.bundle();
+    if (!b.ok) {
+      grunt.fail.warn('Browserify bundle() failed.');
+    }
+
+    grunt.file.write(config.target || this.target, bundle);
   });
 
 };
