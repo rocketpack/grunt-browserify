@@ -19,6 +19,10 @@ module.exports = function (grunt) {
 
     var b = browserify(config.options || {});
 
+    if (config.hook) {
+      config.hook.call(this, b);
+    }
+
     (config.requires || []).forEach(function (req) {
       grunt.verbose.writeln('Adding "' + req + '" to the required module list');
       b.require(req);
@@ -45,10 +49,6 @@ module.exports = function (grunt) {
       separator: ''
     });
     b.append(src);
-
-    if (config.hook) {
-      config.hook.call(this, b);
-    }
 
     var bundle = b.bundle();
     if (!b.ok) {
