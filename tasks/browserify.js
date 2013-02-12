@@ -8,6 +8,12 @@
 
 module.exports = function (grunt) {
 
+  function fail(err) {
+    grunt.log.error();
+    console.error(err);
+    grunt.fail.fatal('Browserify failed');
+  }
+
   // Please see the grunt documentation for more information regarding task and
   // helper creation: https://github.com/cowboy/grunt/blob/master/docs/toc.md
   // ==========================================================================
@@ -49,13 +55,13 @@ module.exports = function (grunt) {
 
       var bundle = b.bundle();
       if (!b.ok) {
-        grunt.fail.fatal('Browserify bundle() failed.');
+        fail('Browserify bundle() failed.');
       }
 
       grunt.file.write(config.target || this.target, bundle);
 
-    } catch (e) {
-      grunt.fail.fatal('Browserify failed: ' + e);
+    } catch (err) {
+      fail(err);
     }
 
   });
