@@ -17,45 +17,47 @@ module.exports = function (grunt) {
     var browserify = require('browserify');
     var config = grunt.config.process(this.name)[this.target];
 
-    var b = browserify(config.options || {});
+    try {
+      
+      var b = browserify(config.options || {});
 
-    if (config.hook) {
-      config.hook.call(this, b);
-    }
-
-    (config.requires || []).forEach(function (req) {
-      grunt.verbose.writeln('Adding "' + req + '" to the required module list');
-      b.require(req);
-    });
-
-    grunt.file.expandFiles(config.entries || []).forEach(function (filepath) {
-      grunt.verbose.writeln('Adding "' + filepath + '" to the entry file list');
-      try {
-        b.addEntry(filepath);
-      } catch (e) {
-        console.error('Error', e);
-        throw e;
+      if (config.hook) {
+        config.hook.call(this, b);
       }
-    });
 
-    var files = grunt.file.expandFiles(config.prepend || []);
-    var src = grunt.helper('concat', files, {
-      separator: ''
-    });
-    b.prepend(src);
+      (config.requires || []).forEach(function (req) {
+        grunt.verbose.writeln('Adding "' + req + '" to the required module list');
+        b.require(req);
+      });
 
-    files = grunt.file.expandFiles(config.append || []);
-    src = grunt.helper('concat', files, {
-      separator: ''
-    });
-    b.append(src);
+      grunt.file.expandFiles(config.entries || []).forEach(function (filepath) {
+        grunt.verbose.writeln('Adding "' + filepath + '" to the entry file list');
+        b.addEntry(filepath);
+      });
 
-    var bundle = b.bundle();
-    if (!b.ok) {
-      grunt.fail.warn('Browserify bundle() failed.');
+      var files = grunt.file.expandFiles(config.prepend || []);
+      var src = grunt.helper('concat', files, {
+        separator: ''
+      });
+      b.prepend(src);
+
+      files = grunt.file.expandFiles(config.append || []);
+      src = grunt.helper('concat', files, {
+        separator: ''
+      });
+      b.append(src);
+
+      var bundle = b.bundle();
+      if (!b.ok) {
+        grunt.fail.fatal('Browserify bundle() failed.');
+      }
+
+      grunt.file.write(config.target || this.target, bundle);
+
+    } catch (e) {
+      grunt.fail.fatal('Browserify failed: ' + e);
     }
 
-    grunt.file.write(config.target || this.target, bundle);
   });
 
 };
