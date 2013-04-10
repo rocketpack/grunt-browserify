@@ -21,10 +21,10 @@ module.exports = function (grunt) {
   // ==========================================================================
   grunt.registerMultiTask('browserify', 'Your task description goes here.', function () {
     var browserify = require('browserify');
-    var config = grunt.config.process(this.name)[this.target];
+    var config = grunt.config.get(this.name)[this.target];
 
     try {
-      
+
       var b = browserify(config.options || {});
 
       if (config.hook) {
@@ -36,21 +36,25 @@ module.exports = function (grunt) {
         b.require(req);
       });
 
-      grunt.file.expandFiles(config.entries || []).forEach(function (filepath) {
+		grunt.file.expand({filter: 'isFile'}, config.entries || []).forEach(function (filepath) {
         grunt.verbose.writeln('Adding "' + filepath + '" to the entry file list');
         b.addEntry(filepath);
       });
 
-      var files = grunt.file.expandFiles(config.prepend || []);
-      var src = grunt.helper('concat', files, {
-        separator: ''
-      });
+      var files = grunt.file.expand({filter: 'isFile'}, config.prepend || []);
+      var src = files
+			.map(function (filepath) {
+				return grunt.file.read(filepath);
+			})
+			.join('');
       b.prepend(src);
 
-      files = grunt.file.expandFiles(config.append || []);
-      src = grunt.helper('concat', files, {
-        separator: ''
-      });
+      files = grunt.file.expand({filter: 'isFile'}, config.append || []);
+      src = files
+			.map(function (filepath) {
+				return grunt.file.read(filepath);
+			})
+			.join('');
       b.append(src);
 
       var bundle = b.bundle();
