@@ -59,7 +59,7 @@ module.exports = function (grunt) {
 
       var bundle = b.bundle();
       if (!b.ok) {
-        fail('Browserify bundle() failed.');
+        fail('Browserify bundle() failed: '+JSON.stringify(b.errors, null, '\t'));
       }
 
       grunt.file.write(config.target || this.target, bundle);
